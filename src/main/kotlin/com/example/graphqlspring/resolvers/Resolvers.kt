@@ -7,6 +7,11 @@ import graphql.schema.TypeResolver
 import org.springframework.stereotype.Component
 import java.util.*
 
+/**
+ * Provides the mapping between the schema and the data.
+ * Each DataFetcher receives a query environment object to interact with the query parameters,
+ * its parent or retrieve further information.
+ */
 @Component
 class Resolvers {
 

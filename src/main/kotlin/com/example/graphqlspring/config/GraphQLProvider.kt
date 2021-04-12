@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
+/**
+ * Configures the binding between the schema and the resolvers.
+ */
 @Component
 class GraphQLProvider(val resolvers: Resolvers) {
 
@@ -26,12 +29,14 @@ class GraphQLProvider(val resolvers: Resolvers) {
     this.graphQL = GraphQL.newGraphQL(schema).build()
   }
 
+  // Connects the schema to the Type-Resolver wiring
   private fun buildSchema(sdl: String): GraphQLSchema {
     val typeRegistry = SchemaParser().parse(sdl)
     val runtimeWiring = buildWiring()
     return SchemaGenerator().makeExecutableSchema(typeRegistry, runtimeWiring)
   }
 
+  // Maps the schema types to their resolving DataFetchers
   private fun buildWiring() = newRuntimeWiring()
     .type("Query") {
       it.dataFetcher("categories", resolvers.categoriesDataFetcher())
@@ -40,6 +45,8 @@ class GraphQLProvider(val resolvers: Resolvers) {
     }
     .type("Mutation") { it.dataFetcher("addMovies", resolvers.addMovieMutationDataFetcher()) }
     .type("Category") { it.dataFetcher("products", resolvers.categoryProductsDataFetcher()) }
+    // The interface provides a Type Resolver instead of a data fetcher.
+    // Fetchers are implemented for the concrete types.
     .type("Product") { it.typeResolver(resolvers.productTypeResolver()) }
     .type("Movie") { it.dataFetcher("price", resolvers.priceDataFetcher()) }
     .type("Book") { it.dataFetcher("price", resolvers.priceDataFetcher()) }

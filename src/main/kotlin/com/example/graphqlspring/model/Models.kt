@@ -3,6 +3,8 @@ package com.example.graphqlspring.model
 import graphql.schema.DataFetchingEnvironment
 import java.util.*
 
+// Defines the models and is used as in memory data storage for the example
+
 enum class SortBy {
   PRICE,
   ALPHABETICALLY
@@ -14,6 +16,8 @@ enum class SortOrder {
 }
 
 open class Product(val id: String, var name: String, var price: Double, var discount: Double?) {
+
+  // GraphQL Java passes the DataFetchingEnvironment to a getter if one is available
   fun getCategoryName(env: DataFetchingEnvironment): String {
     return env.getLocalContext() as String?
       ?: categories.first { category -> category.products.any { it.id === id } }.name
