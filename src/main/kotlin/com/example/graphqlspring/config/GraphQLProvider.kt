@@ -17,16 +17,11 @@ import javax.annotation.PostConstruct
 @Component
 class GraphQLProvider(val resolvers: Resolvers) {
 
-  private lateinit var graphQL: GraphQL
-
   @Bean
-  fun graphQL() = graphQL
-
-  @PostConstruct
-  fun init() {
+  fun graphQL(): GraphQL {
     val url = Resources.getResource("schema.graphqls")
     val schema = buildSchema(Resources.toString(url, Charsets.UTF_8))
-    this.graphQL = GraphQL.newGraphQL(schema).build()
+    return GraphQL.newGraphQL(schema).build()
   }
 
   // Connects the schema to the Type-Resolver wiring
